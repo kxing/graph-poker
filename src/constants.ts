@@ -3,6 +3,8 @@ export const NUMBER_OF_SUITS = 4;
 
 export const HAND_SIZE_LIMIT = 5;
 
+export const LOCAL_STORAGE_KEY = "save_data";
+
 export const ASCENDING_RANK_COMPARATOR = (rank1: number, rank2: number) => {
   // Handle aces.
   if (rank1 === 1 && rank2 !== 1) {
