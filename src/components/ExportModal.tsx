@@ -6,13 +6,13 @@ import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import CodeEditor from "@uiw/react-textarea-code-editor";
 
-interface SaveModalProps {
+interface ExportModalProps {
   gameJson: string;
   open: boolean;
   handleClose: () => void;
 }
 
-const SaveModal = (props: SaveModalProps) => {
+const ExportModal = (props: ExportModalProps) => {
   const handleClose = (_e: React.MouseEvent<HTMLButtonElement>) => {
     props.handleClose();
   };
@@ -22,7 +22,7 @@ const SaveModal = (props: SaveModalProps) => {
   return (
     <>
       <Dialog open={props.open}>
-        <DialogTitle>Save Data</DialogTitle>
+        <DialogTitle>Export Data</DialogTitle>
         <DialogContent>
           <DialogContentText>
             <CodeEditor
@@ -47,4 +47,4 @@ const SaveModal = (props: SaveModalProps) => {
   );
 };
 
-export default SaveModal;
+export default ExportModal;

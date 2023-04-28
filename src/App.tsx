@@ -6,10 +6,11 @@ import styled from "styled-components";
 import AddPlayerModal from "./components/AddPlayerModal";
 import LoadModal from "./components/LoadModal";
 import PlayerHand from "./components/PlayerHand";
-import SaveModal from "./components/SaveModal";
+import ExportModal from "./components/ExportModal";
 import StatsModal from "./components/StatsModal";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Game from "./models/game";
+import { LOCAL_STORAGE_KEY } from "./constants";
 
 const TopRibbon = styled.div`
   margin-bottom: 10px;
@@ -34,35 +35,47 @@ export default function App() {
   const game = Game.fromJson(gameJson);
 
   const [statsModalOpen, setStatsModalOpen] = useState<boolean>(false);
-  const [saveModalOpen, setSaveModalOpen] = useState<boolean>(false);
+  const [exportModalOpen, setExportModalOpen] = useState<boolean>(false);
   const [loadModalOpen, setLoadModalOpen] = useState<boolean>(false);
   const [addPlayerModalOpen, setAddPlayerModalOpen] = useState<boolean>(false);
 
+  const updateGameJson = (newGameJson: string) => {
+    window.localStorage.setItem(LOCAL_STORAGE_KEY, newGameJson);
+    setGameJson(newGameJson);
+  };
+
+  useEffect(() => {
+    const localStorageData = window.localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (localStorageData != null) {
+      setGameJson(localStorageData);
+    }
+  }, []);
+
   const handleAddPlayer = (name: string) => {
     game.addNewPlayer(name);
-    setGameJson(game.toJson());
+    updateGameJson(game.toJson());
   };
 
   const handleDrawCardsForEachPlayer = (
     _e: React.MouseEvent<HTMLButtonElement>
   ) => {
     game.drawRandomCards();
-    setGameJson(game.toJson());
+    updateGameJson(game.toJson());
   };
 
   const handleClearBoard = (_e: React.MouseEvent<HTMLButtonElement>) => {
     game.clearBoard();
-    setGameJson(game.toJson());
+    updateGameJson(game.toJson());
   };
 
   const handleDrawExtraCardForPlayer = (playerIndex: number) => () => {
     game.getPlayers()[playerIndex].drawRandomCard();
-    setGameJson(game.toJson());
+    updateGameJson(game.toJson());
   };
 
   const handleDiscardCardForPlayer = (playerIndex: number) => (id: number) => {
     game.getPlayers()[playerIndex].deleteCard(id);
-    setGameJson(game.toJson());
+    updateGameJson(game.toJson());
   };
 
   const handleOpenStatsModal = (_e: React.MouseEvent<HTMLButtonElement>) => {
@@ -73,12 +86,12 @@ export default function App() {
     setStatsModalOpen(false);
   };
 
-  const handleOpenSaveModal = (_e: React.MouseEvent<HTMLButtonElement>) => {
-    setSaveModalOpen(true);
+  const handleOpenExportModal = (_e: React.MouseEvent<HTMLButtonElement>) => {
+    setExportModalOpen(true);
   };
 
-  const handleCloseSaveModal = () => {
-    setSaveModalOpen(false);
+  const handleCloseExportModal = () => {
+    setExportModalOpen(false);
   };
 
   const handleOpenLoadModal = (_e: React.MouseEvent<HTMLButtonElement>) => {
@@ -90,7 +103,7 @@ export default function App() {
   };
 
   const handleLoad = (gameData: string) => {
-    setGameJson(gameData);
+    updateGameJson(gameData);
   };
 
   const handleOpenAddPlayerModal = (
@@ -127,14 +140,14 @@ export default function App() {
           handleClose={handleCloseStatsModal}
         />
         <ButtonWrapper>
-          <Button variant="outlined" onClick={handleOpenSaveModal}>
-            Save
+          <Button variant="outlined" onClick={handleOpenExportModal}>
+            Export
           </Button>
         </ButtonWrapper>
-        <SaveModal
+        <ExportModal
           gameJson={gameJson}
-          open={saveModalOpen}
-          handleClose={handleCloseSaveModal}
+          open={exportModalOpen}
+          handleClose={handleCloseExportModal}
         />
         <ButtonWrapper>
           <Button variant="outlined" onClick={handleOpenLoadModal}>
